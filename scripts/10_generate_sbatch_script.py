@@ -50,7 +50,7 @@ for toolchain in toolchains:
 #SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
 #SBATCH --mem=0
-#SBATCH -x n1609
+#SBATCH -x n1609,n1016
 
 source {toolchain}
 export PATH={scorep_bin_dir}:$PATH
