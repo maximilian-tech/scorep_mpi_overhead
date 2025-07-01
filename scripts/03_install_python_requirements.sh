@@ -14,7 +14,7 @@ VENV_DIR="${TOOLS_DIR}/venv"
 # Step 0: Download and extract Score-P source
 # -----------------------------------------
 if [ ! -d "${VENV_DIR}" ]; then
-    source ${ROOT_DIR}/toolchains/gompi2024a
+    source ${ROOT_DIR}/toolchains/gompi2024a || true
     
     echo "Installing to VENV (${VENV_DIR})..."
     
