@@ -71,52 +71,103 @@ def aggregate_raw(df: pd.DataFrame) -> pd.DataFrame:
     )
     return out
 
-
 def plot_metric(df, metric, ylab, fname):
-    """Generic line plot of <metric> vs Size, split by label."""
-    fig, ax = plt.subplots(figsize=(8, 6))
+    """
+    Line‐plot <metric> vs Size (log-x, log-y) and, on a secondary y-axis,
+    the %-overhead of  ON  relative to  OFF  for every toolchain/nodes/cores group.
+    """
+    # ------------------------------------------------------------------ figure
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Create a compact legend label
+    # ------------------------------------------------------------------ left-axis: absolute metric
     df["label"] = (
         df["benchmark"]
-        + " | "  # allgather / allreduce …
+        + " | "
         + df["instrumentation"]
         + " | nodes="
         + df["nodes"].astype(str)
         + " | cores="
         + df["cores"].astype(str)
         + " | toolchain="
-        + df["toolchain"].astype(str)
+        + df["toolchain"]
     )
 
     for label, grp in df.groupby("label"):
-        grp_sorted = grp.sort_values("Size")
+        g = grp.sort_values("Size")
         ax.plot(
-            grp_sorted["Size"],
-            grp_sorted[metric],
+            g["Size"],
+            g[metric],
             marker="o",
             label=label,
         )
-
-        # Error bars for the mean plot
+        # Error bars only for the mean metric
         if metric == "grand_mean_avg":
             ax.errorbar(
-                grp_sorted["Size"],
-                grp_sorted[metric],
-                yerr=grp_sorted["se_avg"],
+                g["Size"],
+                g[metric],
+                yerr=g["se_avg"],
                 fmt="none",
                 capsize=3,
             )
 
     ax.set_xscale("log", base=2)
-    ax.set_xlabel("Message size (bytes)")
     ax.set_yscale("log", base=10)
+    ax.set_xlabel("Message size (bytes)")
     ax.set_ylabel(ylab)
-    ax.set_title(f"{ylab} vs message size")
-    ax.legend(fontsize="small")
     ax.grid(True, which="both", ls="--", lw=0.4)
+    ax.set_title("Evaluation of Score-P Overhead (Profile + Trace) on the OSU MPI Benchmarks")
+    # ------------------------------------------------------------------ right-axis: %-overhead (ON vs OFF)
+    ax2 = ax.twinx()
+    ax2.set_ylabel("Overhead ON vs OFF  (%)")
+
+    base_cols = ["toolchain", "nodes", "cores", "benchmark"]
+    for key, grp in df.groupby(base_cols):
+        # Split ON / OFF
+        on  = grp[grp["instrumentation"] == "ON"]
+        off = grp[grp["instrumentation"] == "OFF"]
+
+        if on.empty or off.empty:
+            continue  # cannot form an overhead curve for this group
+
+        merged = pd.merge(
+            on[["Size", metric]],
+            off[["Size", metric]],
+            on="Size",
+            suffixes=("_on", "_off"),
+        ).sort_values("Size")
+
+        overhead = 100.0 * (merged[f"{metric}_on"] - merged[f"{metric}_off"]) / merged[f"{metric}_off"]
+
+        label = (
+            f"{key[3]} | nodes={key[1]} | cores={key[2]} "
+            f"| toolchain={key[0]}  (overhead)"
+        )
+        ax2.plot(
+            merged["Size"],
+            overhead,
+            ls="--",
+            marker=None,
+            label=label,
+        )
+
+    # ------------------------------------------------------------------ legends
+    # Combine handles from both axes
+    h1, l1 = ax.get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    #ax2.legend(h1 + h2, l1 + l2, fontsize="small", loc="upper left")
+    ax2.legend(
+        h1 + h2,
+        l1 + l2,
+        loc="upper center",          # centered horizontally
+        bbox_to_anchor=(0.5, -0.12), # (x-center, y)  y < 0 puts it outside
+        ncol=1,                      # split into rows of 3 items – adapt to taste
+        fontsize="small",
+        frameon=True,
+    )
+
     fig.tight_layout()
-    fig.savefig(fname, dpi=180)
+    fig.subplots_adjust(bottom=0.27)   # increase if legend still touches bottom edge
+    fig.savefig(fname, dpi=200)
     plt.close(fig)
 
 
@@ -156,8 +207,13 @@ def main():
 
     df = df[
          (df["benchmark"] == "collective-osu_allreduce")
-      &  (df["cores"] == 8)
-      #&  (df["nodes"] == 1)
+      &  (
+            (df["cores"] == 8)
+            |
+            (df["cores"] == 96)
+         )
+      &  (df["nodes"] == 1)
+      &  (df["toolchain"] == "gompi2024a")
     ]
 
     # ------------------------------------------------------------------ plots
