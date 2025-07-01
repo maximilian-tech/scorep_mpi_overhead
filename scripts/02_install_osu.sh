@@ -17,6 +17,8 @@ OSU_TARBALL_URL="https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-b
 OSU_TARBALL_NAME="osu-micro-benchmarks-${OSU_VERSION}.tar.gz"
 OSU_SRC_DIR="${BASE_DIR}/osu_source"
 
+export SCOREP_WRAPPER_INSTRUMENTER_FLAGS="--nocompiler --io=none --thread=none --nokokkos"
+
 # -----------------------------------------
 # Step 0: Download and extract Score-P source
 # -----------------------------------------
