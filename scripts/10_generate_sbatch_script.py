@@ -50,10 +50,14 @@ for toolchain in toolchains:
 #SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
 #SBATCH --mem=0
+#SBATCH -x n1609
 
 source {toolchain}
 export PATH={scorep_bin_dir}:$PATH
 export SCOREP_EXPERIMENT_DIRECTORY={scorep_experiment_dir}
+export SCOREP_ENABLE_PROFILING=True
+export SCOREP_ENABLE_TRACING=True
+
 mkdir -p "${{SCOREP_EXPERIMENT_DIRECTORY%/*}}"
 
 cd {osu_dir}
