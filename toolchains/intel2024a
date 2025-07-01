@@ -2,3 +2,10 @@
 
 module purge
 module load release/25.06 intel/2024a
+
+export TOOLCHAIN=intel2024a
+export OSU_CC=mpiicx
+export OSU_CXX=mpiicpx
+
+export SCOREP_NOCROSS_COMPILER=oneapi
+export SCOREP_MPI=intel3

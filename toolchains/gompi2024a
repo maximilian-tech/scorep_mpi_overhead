@@ -2,3 +2,11 @@
 
 module purge
 module load release/25.06 gompi/2024a
+
+export TOOLCHAIN=gompi2024a
+export OSU_CC=mpicc
+export OSU_CXX=mpicxx
+
+export SCOREP_NOCROSS_COMPILER=gcc
+export SCOREP_MPI=openmpi
+
