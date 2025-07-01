@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 from pathlib import Path
 import sys
 
@@ -32,7 +32,11 @@ for toolchain in toolchains:
         for nodes in nnodes:
             for cores in ncores:
                 append = root_dir / "results" / f"{toolchain_name}_{scorep_enabled}_n{nodes:03d}_c{cores:05d}"
-                run_cmds = "\n".join(f"srun ./{exe} -z > {append}_{exe.replace('/','-')}" for exe in executables)
+                scorep_experiment_dir = root_dir / "scorep_results" / f"{toolchain_name}_{scorep_enabled}_n{nodes:03d}_c{cores:05d}"
+
+                rm_old_output_cmds = "\n".join(f"rm -f {append}_{exe.replace('/','-')}" for exe in executables)
+
+                run_cmds = "\n".join(f"\tsrun ./{exe} -z >> {append}_{exe.replace('/','-')}" for exe in executables)
 
                 sbatch_script = f"""
 #!/bin/bash
@@ -42,17 +46,22 @@ for toolchain in toolchains:
 #SBATCH -n {cores}
 #SBATCH --switch=1
 #SBATCH --time=00:10:00
-##SBATCH --exclusive
-##SBATCH --constraint=no_monitoring
+#SBATCH --exclusive
+#SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
 
 source {toolchain}
 export PATH={scorep_bin_dir}:$PATH
+export SCOREP_EXPERIMENT_DIRECTORY={scorep_experiment_dir}
+mkdir -p "${{SCOREP_EXPERIMENT_DIRECTORY%/*}}"
 
 cd {osu_dir}
 
-{run_cmds}
+{rm_old_output_cmds}
 
+for i in {{1..10}} ; do
+{run_cmds}
+done
 """
                 out = root_dir / "jobs" / f"{append.name}.sh"
                 out.parent.mkdir(exist_ok=True, parents=True)
