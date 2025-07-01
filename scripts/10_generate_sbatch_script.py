@@ -5,7 +5,7 @@ import sys
 script_path = Path(__file__).resolve()
 
 ncores = [4,8,16,32,64,96]
-nnodes = [1]
+nnodes = [1,4]
 
 root_dir: Path      = Path(script_path).parent.parent
 tools_dir: Path     = root_dir / "tools"
@@ -45,10 +45,11 @@ for toolchain in toolchains:
 #SBATCH -N {nodes}
 #SBATCH -n {cores}
 #SBATCH --switch=1
-#SBATCH --time=00:10:00
+#SBATCH --time=00:15:00
 #SBATCH --exclusive
 #SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
+#SBATCH --mem=0
 
 source {toolchain}
 export PATH={scorep_bin_dir}:$PATH
