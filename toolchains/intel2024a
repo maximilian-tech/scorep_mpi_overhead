@@ -1,11 +1,11 @@
 #!/bin/bash
 
 module purge
-module load release/25.06 intel/2024a
+module load release/25.06 intel/2024a CMake/3.29.3 Python/3.12.3
 
 export TOOLCHAIN=intel2024a
-export OSU_CC=mpiicx
-export OSU_CXX=mpiicpx
+export OSU_CC="mpiicc -cc=icx"
+export OSU_CXX="mpiicpc -cxx=icpx"
 
 export SCOREP_NOCROSS_COMPILER=oneapi
 export SCOREP_MPI=intel3

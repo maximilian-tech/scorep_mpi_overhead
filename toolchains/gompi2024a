@@ -1,7 +1,7 @@
 #!/bin/bash
 
 module purge
-module load release/25.06 gompi/2024a
+module load release/25.06 gompi/2024a CMake/3.29.3 Python/3.12.3
 
 export TOOLCHAIN=gompi2024a
 export OSU_CC=mpicc
