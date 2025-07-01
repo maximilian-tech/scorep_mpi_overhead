@@ -18,7 +18,7 @@ def load_table(path):
     # parse data after header
     data = []
     for line in raw:
-        if not line.strip() or line.lstrip().startswith('#'):
+        if not line.strip() or line.lstrip().startswith('#') or line.lstrip().startswith('rank'):
             continue
         data.append(re.split(r'\s{2,}', line.strip()))
 
