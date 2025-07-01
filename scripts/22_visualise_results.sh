@@ -110,7 +110,7 @@ def plot_metric(df, metric, ylab, fname):
 
     ax.set_xscale("log", base=2)
     ax.set_xlabel("Message size (bytes)")
-    ax.set_yscale("log", base=2)
+    ax.set_yscale("log", base=10)
     ax.set_ylabel(ylab)
     ax.set_title(f"{ylab} vs message size")
     ax.legend(fontsize="small")
