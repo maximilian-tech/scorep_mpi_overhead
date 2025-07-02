@@ -6,8 +6,8 @@ script_path = Path(__file__).resolve()
 
 #ncores = [4,8,16,32,64,96]
 #nnodes = [1,4]
-ncores = [4,96]
-nnodes = [1]
+ncores = [4,104]
+nnodes = [1,4]
 
 root_dir: Path      = Path(script_path).parent.parent
 tools_dir: Path     = root_dir / "tools"
@@ -61,7 +61,7 @@ for toolchain in toolchains:
 #SBATCH --hint=nomultithread
 #SBATCH --mem=0
 #SBATCH --output="{root_dir}/jobs/{name}.out"
-#SBATCH -x n1609,n1016
+#SBATCH -x n1609,n1016,n1159
 
 source {toolchain}
 export PATH={scorep_bin_dir}:$PATH
