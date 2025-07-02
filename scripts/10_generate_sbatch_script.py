@@ -55,6 +55,9 @@ executables = [
 for toolchain in toolchains:
     toolchain_name = Path(toolchain).name
 
+    #if "gompi" in toolchain_name:
+        #continue
+
     scorep_bin_dir: Path = tools_dir / ("scorep_" + toolchain_name ) / "bin"
 
     #for scorep_enabled in ['scorepOFF', 'scorepON']:
@@ -106,6 +109,8 @@ for scorep_enabled in scorepOFF scorepON ; do
 done
 
 mkdir -p {root_dir}/scorep_results
+
+set -x
 
 for i in {{1..3}} ; do
   for scorep_enabled in scorepOFF scorepON ; do
