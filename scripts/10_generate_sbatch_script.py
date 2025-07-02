@@ -6,7 +6,7 @@ script_path = Path(__file__).resolve()
 
 #ncores = [4,8,16,32,64,96]
 #nnodes = [1,4]
-ncores = [4,104]
+ncores = [4,96]
 nnodes = [1,4]
 
 root_dir: Path      = Path(script_path).parent.parent
@@ -55,12 +55,13 @@ for toolchain in toolchains:
 #SBATCH -N {nodes}
 #SBATCH -n {cores}
 #SBATCH --switch=1
-#SBATCH --time=00:15:00
+#SBATCH --time=00:20:00
 #SBATCH --exclusive
 #SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
 #SBATCH --mem=0
 #SBATCH --output="{root_dir}/jobs/{name}.out"
+#SBATCH --cpu-freq=2000000
 #SBATCH -x n1609,n1016,n1159
 
 source {toolchain}
