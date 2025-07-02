@@ -17,7 +17,39 @@ toolchains = list(toolchain_dir.iterdir())
 
 executables = [
     "collective/osu_allgather",
+    "collective/osu_allgather_persistent",
+    "collective/osu_allgatherv",
+    "collective/osu_allgatherv_persistent",
     "collective/osu_allreduce",
+    "collective/osu_allreduce_persistent",
+    "collective/osu_alltoall",
+    "collective/osu_alltoall_persistent",
+    "collective/osu_alltoallv",
+    "collective/osu_alltoallv_persistent",
+    "collective/osu_alltoallw",
+    "collective/osu_alltoallw_persistent",
+    "collective/osu_barrier",
+    "collective/osu_barrier_persistent",
+    "collective/osu_bcast",
+    "collective/osu_bcast_persistent",
+    "collective/osu_gather",
+    "collective/osu_gather_persistent",
+    "collective/osu_gatherv",
+    "collective/osu_gatherv_persistent",
+    "collective/osu_neighbor_allgather",
+    "collective/osu_neighbor_allgatherv",
+    "collective/osu_neighbor_alltoall",
+    "collective/osu_neighbor_alltoallv",
+    "collective/osu_neighbor_alltoallw",
+    "collective/osu_reduce",
+    "collective/osu_reduce_persistent",
+    "collective/osu_reduce_scatter",
+    "collective/osu_reduce_scatter_block",
+    "collective/osu_reduce_scatter_persistent",
+    "collective/osu_scatter",
+    "collective/osu_scatter_persistent",
+    "collective/osu_scatterv",
+    "collective/osu_scatterv_persistent",
 ]
 
 for toolchain in toolchains:
@@ -55,7 +87,7 @@ for toolchain in toolchains:
 #SBATCH -N {nodes}
 #SBATCH -n {cores}
 #SBATCH --switch=1
-#SBATCH --time=00:20:00
+#SBATCH --time=04:20:00
 #SBATCH --exclusive
 #SBATCH --constraint=no_monitoring
 #SBATCH --hint=nomultithread
@@ -75,7 +107,7 @@ done
 
 mkdir -p {root_dir}/scorep_results
 
-for i in {{1..10}} ; do
+for i in {{1..3}} ; do
   for scorep_enabled in scorepOFF scorepON ; do
 
     cd "{osu_dir}"
