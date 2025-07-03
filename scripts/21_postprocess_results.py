@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import os
 
 # 1. Read the raw CSV (⇧ copy-and-paste the block you posted into osu.csv)
 df = pd.read_csv("results.csv")
@@ -35,5 +36,6 @@ out = (df
 
 # 4. Inspect
 print(out.head())
-
-out.to_csv("results_postprocess.csv", index=False, sep=",")
+out_dir = Path("../results_postprocessed")
+out_dir.mkdir(exist_ok=True)
+out.to_csv(f"{out_dir.name}/results_postprocess.csv", index=False, sep=",")
