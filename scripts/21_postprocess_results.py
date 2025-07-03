@@ -2,7 +2,7 @@
 
 import pandas as pd
 import numpy as np
-import os
+from pathlib import Path
 
 # 1. Read the raw CSV (⇧ copy-and-paste the block you posted into osu.csv)
 df = pd.read_csv("results.csv")
