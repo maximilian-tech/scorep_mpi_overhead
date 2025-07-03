@@ -77,7 +77,7 @@ def plot_metric(df, metric, ylab, fname):
     the %-overhead of  ON  relative to  OFF  for every toolchain/nodes/cores group.
     """
     # ------------------------------------------------------------------ figure
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 13))
 
     # ------------------------------------------------------------------ left-axis: absolute metric
     df["label"] = (
@@ -205,22 +205,29 @@ def main():
     df[numeric] = df[numeric].apply(pd.to_numeric, errors="coerce")
     # ------------------------------------------------------------------ filter
 
-    df = df[
-         (df["benchmark"] == "collective-osu_allreduce")
-      &  (
-            (df["cores"] == 8)
-            |
-            (df["cores"] == 96)
-         )
-      &  (df["nodes"] == 1)
-      &  (df["toolchain"] == "gompi2024a")
-    ]
+    #df = df[
+         #(df["benchmark"] == "collective-osu_allreduce")
+         #(df["benchmark"] == "collective-osu_allgatherv" )
+      #&
+      #(
+            #(df["cores"] == 4)
+            #|
+            #(df["cores"] == 96)
+         #)
+      #&  (df["nodes"] == 1)
+      #&  (df["toolchain"] == "gompi2024a")
+      #&  (df["toolchain"] == "intel2024a")
+    #]
 
     # ------------------------------------------------------------------ plots
     out_base = str(csv_path.with_suffix(""))
-    plot_metric(df, "grand_mean_avg", "Mean latency (µs)", out_base + "_mean.png")
-    plot_metric(df, "mean_p90", "Mean P90 latency (µs)", out_base + "_p90.png")
-    plot_metric(df, "worst_p99", "Worst P99 latency (µs)", out_base + "_p99.png")
+    for benchmark in df["benchmark"].unique():
+      df_tmp = df[
+                  df["benchmark"] == benchmark
+                ]
+      plot_metric(df_tmp, "grand_mean_avg", "Mean latency (µs)", out_base + "_" + benchmark + "_mean.png")
+      #plot_metric(df_tmp, "mean_p90", "Mean P90 latency (µs)", out_base + "_" + benchmark +"_p90.png")
+      #plot_metric(df_tmp, "worst_p99", "Worst P99 latency (µs)", out_base + "_" + benchmark +"_p99.png")
 
     print(f"[done] PNGs written next to {csv_path}")
 
